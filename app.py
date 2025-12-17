@@ -200,7 +200,7 @@ def salvar_resultado(nome, pontuacao, acertos, total_perguntas, tempo_total):
         'acertos': acertos,
         'total_perguntas': total_perguntas,
         'tempo_total': tempo_total,
-        'data': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     })
     
     # Salvar ranking atualizado
