@@ -257,21 +257,25 @@ if 'visualizar_ranking' in st.session_state and st.session_state.visualizar_rank
             if i == 1:
                 icone = '🥇'
                 cor = '#ffd700'
+                cor_texto = '#000000'
             elif i == 2:
                 icone = '🥈'
                 cor = '#c0c0c0'
+                cor_texto = '#000000'
             elif i == 3:
                 icone = '🥉'
                 cor = '#cd7f32'
+                cor_texto = '#000000'
             else:
                 icone = f'{i}º'
-                cor = '#f8f9fa'
+                cor = '#ffffff'
+                cor_texto = '#000000'
             
             st.markdown(f"""
             <div style="background-color: {cor}; padding: 1rem; border-radius: 12px; margin-bottom: 0.8rem; border: 2px solid #dee2e6;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <strong style="font-size: 1.2rem;">{icone} {participante['nome']}</strong><br>
+                        <strong style="font-size: 1.2rem; color: {cor_texto};">{icone} {participante['nome']}</strong><br>
                         <span style="color: #666; font-size: 0.9rem;">
                             Acertos: {participante['acertos']}/{participante['total_perguntas']} | 
                             Tempo: {int(participante['tempo_total'])}s | 
