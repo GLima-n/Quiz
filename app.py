@@ -299,15 +299,6 @@ elif not st.session_state.finalizado:
                     })
                     st.session_state.respondeu = True
                     st.rerun()
-        else:
-            # Mostrar resultado da resposta
-            ultima_resposta = st.session_state.respostas[-1]
-            if ultima_resposta['correta']:
-                st.markdown(f'<div class="result-correct">✅ Correto! +{ultima_resposta["pontos"]} pontos</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="result-incorrect">❌ Incorreto! A resposta correta era: {ultima_resposta["resposta_correta"]}) {pergunta["alternativas"][ultima_resposta["resposta_correta"]]}</div>', unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
             
             if st.button('➡️ Próxima Pergunta'):
                 st.session_state.pergunta_atual += 1
