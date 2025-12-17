@@ -208,15 +208,32 @@ except Exception as e:
 def carregar_perguntas():
     try:
         df = pd.read_excel('Confra_EC_2026_Modelo_Perguntas.xlsx')
+        
+        def formatar_opcao(valor):
+            # Se for datetime/Timestamp, formata
+            if isinstance(valor, (pd.Timestamp, datetime)):
+                return valor.strftime('%d/%m/%Y')
+            # Se for string parecida com data ISO, tenta converter
+            if isinstance(valor, str):
+                try:
+                    # Tenta limpar string de timestamp comum
+                    if ' 00:00:00' in valor:
+                        valor = valor.replace(' 00:00:00', '')
+                        dt = datetime.strptime(valor, '%Y-%m-%d')
+                        return dt.strftime('%d/%m/%Y')
+                except:
+                    pass
+            return valor
+
         perguntas = []
         for _, row in df.iterrows():
             perguntas.append({
                 'pergunta': row['Pergunta'],
                 'alternativas': {
-                    'A': row['Alternativa A'],
-                    'B': row['Alternativa B'],
-                    'C': row['Alternativa C'],
-                    'D': row['Alternativa D']
+                    'A': formatar_opcao(row['Alternativa A']),
+                    'B': formatar_opcao(row['Alternativa B']),
+                    'C': formatar_opcao(row['Alternativa C']),
+                    'D': formatar_opcao(row['Alternativa D'])
                 },
                 'resposta_correta': row['Resposta Correta (A/B/C/D)'].strip().upper()
             })
