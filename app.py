@@ -168,8 +168,40 @@ st.markdown("""
     
     /* Esconder footer */
     footer {visibility: hidden;}
+    
+    /* Logo no canto superior esquerdo */
+    .logo-container {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 9999;
+        width: 52px;
+        pointer-events: none;
+    }
 </style>
 """, unsafe_allow_html=True)
+
+# Adicionar Logo
+import base64
+
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+try:
+    if os.path.exists("logoNova 6.svg"):
+        logo_base64 = get_base64_of_bin_file("logoNova 6.svg")
+        st.markdown(
+            f"""
+            <div class="logo-container">
+                <img src="data:image/svg+xml;base64,{logo_base64}" width="100%">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+except Exception as e:
+    st.error(f"Erro ao carregar logo: {e}")
 
 # Função para carregar perguntas
 @st.cache_data
