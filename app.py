@@ -3,7 +3,7 @@ import pandas as pd
 import time
 import json
 import os
-from datetime import datetime
+from datetime import datetime #Alef
 
 # Configuração da página
 st.set_page_config(
@@ -305,21 +305,14 @@ elif not st.session_state.iniciado:
     
     nome = st.text_input('Digite seu nome:', placeholder='Seu nome completo', key='input_nome')
     
+
     st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button('🚀 Começar Quiz', key='btn_iniciar'):
         if nome.strip():
-            # Verificar se é o nome admin para ver ranking (múltiplas estratégias)
-            nome_limpo = nome.strip()
-            is_admin = (
-                nome_limpo == 'Alef Gomes#' or
-                nome_limpo.lower() == 'alef gomes#' or
-                'alef gomes' in nome_limpo.lower() and '#' in nome_limpo
-            )
-            
-            if is_admin:
+            # Verificar se é o nome admin (case-insensitive)
+            if nome.strip().lower() == 'alef gomes#':
                 st.session_state.visualizar_ranking = True
-                # NÃO marcar como iniciado para admin
                 st.rerun()
             else:
                 st.session_state.nome = nome.strip()
