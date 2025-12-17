@@ -312,6 +312,7 @@ elif not st.session_state.iniciado:
             # Verificar se é o nome admin para ver ranking
             if nome.strip() == 'Alef Gomes#':
                 st.session_state.visualizar_ranking = True
+                # NÃO marcar como iniciado para admin
                 st.rerun()
             else:
                 st.session_state.nome = nome.strip()
