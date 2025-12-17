@@ -541,6 +541,6 @@ else:
     
     st.markdown('<div class="white-card">', unsafe_allow_html=True)
     st.markdown('<h1 class="main-title">🎯 Quiz Finalizado!</h1>', unsafe_allow_html=True)
-    st.markdown(f'<p style="text-align: center; font-size: 1.5rem; color: #666; margin-bottom: 2rem;">Obrigado pela sua participação, {st.session_state.nome}!</p>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #999;">Suas respostas foram registradas com sucesso.</p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="text-align: center; font-size: 1.5rem; color: #ffffff; margin-bottom: 2rem;">Obrigado pela sua participação, {st.session_state.nome}!</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #e0e0e0;">Suas respostas foram registradas com sucesso.</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
