@@ -194,6 +194,7 @@ def carregar_perguntas():
         return []
 
 # Função para salvar resultados
+# Função para salvar resultados
 def salvar_resultado(nome, pontuacao, acertos, total_perguntas, tempo_total):
     arquivo = 'ranking.json'
     
@@ -204,15 +205,52 @@ def salvar_resultado(nome, pontuacao, acertos, total_perguntas, tempo_total):
     else:
         ranking = []
     
-    # Adicionar novo resultado
-    ranking.append({
-        'nome': nome,
-        'pontuacao': pontuacao,
-        'acertos': acertos,
-        'total_perguntas': total_perguntas,
-        'tempo_total': tempo_total,
-        'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-    })
+    # Normalizar nome para comparação (ignorar maiúsculas/minúsculas e espaços)
+    import re
+    nome_norm = re.sub(r'\s+', ' ', nome.strip()).lower()
+    
+    # Não salvar se for o admin
+    if nome_norm == 'alef gomes#':
+        return
+    
+    # Verificar se usuário já existe e manter a melhor pontuação
+    usuario_existente = False
+    for i, item in enumerate(ranking):
+        item_norm = re.sub(r'\s+', ' ', item['nome'].strip()).lower()
+        if item_norm == nome_norm:
+            usuario_existente = True
+            # Se a nova pontuação for maior, atualiza
+            if pontuacao > item['pontuacao']:
+                ranking[i] = {
+                    'nome': nome,
+                    'pontuacao': pontuacao,
+                    'acertos': acertos,
+                    'total_perguntas': total_perguntas,
+                    'tempo_total': tempo_total,
+                    'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+                }
+            # Se pontuação for igual, usa o que teve menor tempo
+            elif pontuacao == item['pontuacao'] and tempo_total < item['tempo_total']:
+                ranking[i] = {
+                    'nome': nome,
+                    'pontuacao': pontuacao,
+                    'acertos': acertos,
+                    'total_perguntas': total_perguntas,
+                    'tempo_total': tempo_total,
+                    'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+                }
+            break
+    
+    # Se não existe, adiciona novo
+    if not usuario_existente:
+        ranking.append({
+            'nome': nome,
+            'pontuacao': pontuacao,
+            'acertos': acertos,
+            'total_perguntas': total_perguntas,
+            'tempo_total': tempo_total,
+            'data': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+        })
     
     # Salvar ranking atualizado
     with open(arquivo, 'w', encoding='utf-8') as f:
@@ -269,33 +307,37 @@ if 'visualizar_ranking' in st.session_state and st.session_state.visualizar_rank
                 icone = '🥇'
                 cor = '#ffd700'
                 cor_texto = '#000000'
+                cor_pontos = '#C41E3A'
             elif i == 2:
                 icone = '🥈'
                 cor = '#c0c0c0'
                 cor_texto = '#000000'
+                cor_pontos = '#C41E3A'
             elif i == 3:
                 icone = '🥉'
                 cor = '#cd7f32'
                 cor_texto = '#000000'
+                cor_pontos = '#C41E3A'
             else:
                 icone = f'{i}º'
-                cor = '#ffffff'
-                cor_texto = '#000000'
+                cor = 'rgba(255, 255, 255, 0.1)'
+                cor_texto = '#ffffff'
+                cor_pontos = '#ffffff'
             
             st.markdown(f"""
-            <div style="background-color: {cor}; padding: 1rem; border-radius: 12px; margin-bottom: 0.8rem; border: 2px solid #dee2e6;">
+            <div style="background-color: {cor}; padding: 1rem; border-radius: 12px; margin-bottom: 0.8rem; border: 1px solid rgba(255,255,255,0.2);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <strong style="font-size: 1.2rem; color: {cor_texto};">{icone} {participante['nome']}</strong><br>
-                        <span style="color: #e0e0e0; font-size: 0.9rem;">
+                        <span style="color: {cor_texto}; font-size: 0.9rem; opacity: 0.8;">
                             Acertos: {participante['acertos']}/{participante['total_perguntas']} | 
                             Tempo: {int(participante['tempo_total'])}s | 
                             Data: {participante['data']}
                         </span>
                     </div>
                     <div style="text-align: right;">
-                        <strong style="font-size: 1.5rem; color: #C41E3A;">{participante['pontuacao']}</strong><br>
-                        <span style="color: #e0e0e0; font-size: 0.9rem;">pontos</span>
+                        <strong style="font-size: 1.5rem; color: {cor_pontos};">{participante['pontuacao']}</strong><br>
+                        <span style="color: {cor_texto}; font-size: 0.9rem; opacity: 0.8;">pontos</span>
                     </div>
                 </div>
             </div>
