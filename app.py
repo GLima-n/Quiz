@@ -72,12 +72,13 @@ st.markdown("""
     }
     
     /* Cartão branco */
+    /* Cartão Transparente (antigo white-card) */
     .white-card {
-        background-color: white;
-        padding: 0.75rem 1rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        margin-bottom: 0.5rem;
+        background-color: transparent;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+        margin-bottom: 1rem;
     }
     
     /* Título principal */
@@ -99,16 +100,19 @@ st.markdown("""
     .timer-text {
         font-size: 3rem;
         font-weight: 800;
-        color: #C41E3A;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
     
+    /* Pergunta */
     /* Pergunta */
     .question-text {
         font-size: 1.5rem;
         font-weight: 600;
-        color: #1a1a1a;
+        color: #ffffff;
         margin-bottom: 1.5rem;
         line-height: 1.4;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
     
     /* Alternativas */
@@ -252,12 +256,12 @@ if 'visualizar_ranking' in st.session_state and st.session_state.visualizar_rank
     
     st.markdown('<div class="white-card">', unsafe_allow_html=True)
     st.markdown('<h1 class="main-title">🏆 Ranking - Confra EC 2026</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 2rem;">Painel Administrativo</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #e0e0e0; margin-bottom: 2rem;">Painel Administrativo</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
     if ranking:
         st.markdown('<div class="white-card">', unsafe_allow_html=True)
-        st.markdown(f'<p style="color: #666; margin-bottom: 1rem;"><strong>Total de participantes:</strong> {len(ranking)}</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color: #e0e0e0; margin-bottom: 1rem;"><strong>Total de participantes:</strong> {len(ranking)}</p>', unsafe_allow_html=True)
         
         # Tabela de ranking
         for i, participante in enumerate(ranking, 1):
@@ -283,7 +287,7 @@ if 'visualizar_ranking' in st.session_state and st.session_state.visualizar_rank
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <strong style="font-size: 1.2rem; color: {cor_texto};">{icone} {participante['nome']}</strong><br>
-                        <span style="color: #666; font-size: 0.9rem;">
+                        <span style="color: #e0e0e0; font-size: 0.9rem;">
                             Acertos: {participante['acertos']}/{participante['total_perguntas']} | 
                             Tempo: {int(participante['tempo_total'])}s | 
                             Data: {participante['data']}
@@ -291,7 +295,7 @@ if 'visualizar_ranking' in st.session_state and st.session_state.visualizar_rank
                     </div>
                     <div style="text-align: right;">
                         <strong style="font-size: 1.5rem; color: #C41E3A;">{participante['pontuacao']}</strong><br>
-                        <span style="color: #666; font-size: 0.9rem;">pontos</span>
+                        <span style="color: #e0e0e0; font-size: 0.9rem;">pontos</span>
                     </div>
                 </div>
             </div>
@@ -312,7 +316,7 @@ if 'visualizar_ranking' in st.session_state and st.session_state.visualizar_rank
 elif not st.session_state.iniciado:
     st.markdown('<div class="white-card">', unsafe_allow_html=True)
     st.markdown('<h1 class="main-title">🎯 Confra EC 2026</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 2rem;">Quiz de Conhecimentos</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #e0e0e0; margin-bottom: 2rem;">Quiz de Conhecimentos</p>', unsafe_allow_html=True)
     
     nome = st.text_input('Digite seu nome:', placeholder='Seu nome completo', key='input_nome')
     
@@ -378,7 +382,7 @@ elif not st.session_state.finalizado:
         st.progress(progress)
         
         # Número da pergunta
-        st.markdown(f'<p style="text-align: center; color: #666; margin-top: 1rem;">Pergunta {pergunta_idx + 1} de {len(perguntas)}</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="text-align: center; color: #e0e0e0; margin-top: 1rem;">Pergunta {pergunta_idx + 1} de {len(perguntas)}</p>', unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
         
