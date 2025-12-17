@@ -308,38 +308,19 @@ elif not st.session_state.iniciado:
     st.markdown('</div>', unsafe_allow_html=True)
     
     if st.button('🚀 Começar Quiz', key='btn_iniciar'):
-        # DEBUG COMPLETO
-        st.write("=" * 50)
-        st.write("🔍 DEBUG INICIADO")
-        st.write(f"Nome bruto: '{nome}'")
-        st.write(f"Tipo: {type(nome)}")
-        st.write(f"Tamanho: {len(nome)}")
-        
         if nome.strip():
-            nome_stripped = nome.strip()
-            nome_lower = nome_stripped.lower()
-            
-            st.write(f"Nome stripped: '{nome_stripped}'")
-            st.write(f"Nome lower: '{nome_lower}'")
-            st.write(f"Comparando com: 'alef gomes#'")
-            st.write(f"São iguais? {nome_lower == 'alef gomes#'}")
-            st.write(f"Caracteres do nome: {[c for c in nome_lower]}")
-            st.write(f"Códigos ASCII: {[ord(c) for c in nome_lower]}")
-            st.write(f"Esperado: {['a','l','e','f',' ','g','o','m','e','s','#']}")
-            st.write(f"Esperado ASCII: {[ord(c) for c in 'alef gomes#']}")
+            # Normalizar espaços múltiplos para um único espaço
+            import re
+            nome_normalizado = re.sub(r'\s+', ' ', nome.strip()).lower()
             
             # Verificar se é o nome admin (case-insensitive)
-            if nome_lower == 'alef gomes#':
-                st.success("✅ ADMIN DETECTADO!")
+            if nome_normalizado == 'alef gomes#':
                 st.session_state.visualizar_ranking = True
-                time.sleep(1)  # Pausa para ver a mensagem
                 st.rerun()
             else:
-                st.error("❌ NÃO É ADMIN")
-                st.session_state.nome = nome_stripped
+                st.session_state.nome = re.sub(r'\s+', ' ', nome.strip())
                 st.session_state.iniciado = True
                 st.session_state.tempo_inicio = time.time()
-                time.sleep(1)  # Pausa para ver a mensagem
                 st.rerun()
         else:
             st.error('Por favor, digite seu nome!')
