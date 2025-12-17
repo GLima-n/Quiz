@@ -309,8 +309,15 @@ elif not st.session_state.iniciado:
     
     if st.button('🚀 Começar Quiz', key='btn_iniciar'):
         if nome.strip():
-            # Verificar se é o nome admin para ver ranking
-            if nome.strip() == 'Alef Gomes#':
+            # Verificar se é o nome admin para ver ranking (múltiplas estratégias)
+            nome_limpo = nome.strip()
+            is_admin = (
+                nome_limpo == 'Alef Gomes#' or
+                nome_limpo.lower() == 'alef gomes#' or
+                'alef gomes' in nome_limpo.lower() and '#' in nome_limpo
+            )
+            
+            if is_admin:
                 st.session_state.visualizar_ranking = True
                 # NÃO marcar como iniciado para admin
                 st.rerun()
