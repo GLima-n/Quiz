@@ -274,42 +274,30 @@ elif not st.session_state.finalizado:
         # Alternativas
         st.markdown('<div class="white-card">', unsafe_allow_html=True)
         
-        if not st.session_state.respondeu:
-            for letra, texto in pergunta['alternativas'].items():
-                if st.button(f'{letra}) {texto}', key=f'alt_{letra}'):
-                    tempo_gasto = 30 - tempo_restante
-                    correta = (letra == pergunta['resposta_correta'])
-                    
-                    # Calcular pontos
-                    if correta:
-                        pontos_base = 100
-                        bonus_tempo = int((tempo_restante / 30) * 50)  # Até 50 pontos de bônus
-                        pontos = pontos_base + bonus_tempo
-                    else:
-                        pontos = 0
-                    
-                    st.session_state.pontuacao += pontos
-                    st.session_state.respostas.append({
-                        'pergunta': pergunta['pergunta'],
-                        'resposta': letra,
-                        'correta': correta,
-                        'tempo_gasto': tempo_gasto,
-                        'pontos': pontos,
-                        'resposta_correta': pergunta['resposta_correta']
-                    })
-                    st.session_state.respondeu = True
-                    st.rerun()
-        else:
-            # Mostrar resultado da resposta
-            ultima_resposta = st.session_state.respostas[-1]
-            if ultima_resposta['correta']:
-                st.markdown(f'<div class="result-correct">✅ Correto! +{ultima_resposta["pontos"]} pontos</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="result-incorrect">❌ Incorreto! A resposta correta era: {ultima_resposta["resposta_correta"]}) {pergunta["alternativas"][ultima_resposta["resposta_correta"]]}</div>', unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-            if st.button('➡️ Próxima Pergunta'):
+        for letra, texto in pergunta['alternativas'].items():
+            if st.button(f'{letra}) {texto}', key=f'alt_{letra}'):
+                tempo_gasto = 30 - tempo_restante
+                correta = (letra == pergunta['resposta_correta'])
+                
+                # Calcular pontos
+                if correta:
+                    pontos_base = 100
+                    bonus_tempo = int((tempo_restante / 30) * 50)  # Até 50 pontos de bônus
+                    pontos = pontos_base + bonus_tempo
+                else:
+                    pontos = 0
+                
+                st.session_state.pontuacao += pontos
+                st.session_state.respostas.append({
+                    'pergunta': pergunta['pergunta'],
+                    'resposta': letra,
+                    'correta': correta,
+                    'tempo_gasto': tempo_gasto,
+                    'pontos': pontos,
+                    'resposta_correta': pergunta['resposta_correta']
+                })
+                
+                # Avançar para próxima pergunta automaticamente
                 st.session_state.pergunta_atual += 1
                 st.session_state.tempo_inicio = time.time()
                 st.session_state.respondeu = False
