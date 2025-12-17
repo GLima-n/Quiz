@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import time
+import json
+import os
 from datetime import datetime
 
 # Configuração da página
@@ -180,6 +182,42 @@ def carregar_perguntas():
         st.error(f"Erro ao carregar perguntas: {e}")
         return []
 
+# Função para salvar resultados
+def salvar_resultado(nome, pontuacao, acertos, total_perguntas, tempo_total):
+    arquivo = 'ranking.json'
+    
+    # Carregar ranking existente
+    if os.path.exists(arquivo):
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            ranking = json.load(f)
+    else:
+        ranking = []
+    
+    # Adicionar novo resultado
+    ranking.append({
+        'nome': nome,
+        'pontuacao': pontuacao,
+        'acertos': acertos,
+        'total_perguntas': total_perguntas,
+        'tempo_total': tempo_total,
+        'data': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    })
+    
+    # Salvar ranking atualizado
+    with open(arquivo, 'w', encoding='utf-8') as f:
+        json.dump(ranking, f, indent=2, ensure_ascii=False)
+
+# Função para carregar ranking
+def carregar_ranking():
+    arquivo = 'ranking.json'
+    if os.path.exists(arquivo):
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            ranking = json.load(f)
+        # Ordenar por pontuação (decrescente)
+        ranking.sort(key=lambda x: x['pontuacao'], reverse=True)
+        return ranking
+    return []
+
 # Inicializar session_state
 if 'nome' not in st.session_state:
     st.session_state.nome = ''
@@ -201,8 +239,66 @@ if 'respondeu' not in st.session_state:
 # Carregar perguntas
 perguntas = carregar_perguntas()
 
+# Tela de ranking (admin)
+if 'visualizar_ranking' in st.session_state and st.session_state.visualizar_ranking:
+    ranking = carregar_ranking()
+    
+    st.markdown('<div class="white-card">', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-title">🏆 Ranking - Confra EC 2026</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 2rem;">Painel Administrativo</p>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    if ranking:
+        st.markdown('<div class="white-card">', unsafe_allow_html=True)
+        st.markdown(f'<p style="color: #666; margin-bottom: 1rem;"><strong>Total de participantes:</strong> {len(ranking)}</p>', unsafe_allow_html=True)
+        
+        # Tabela de ranking
+        for i, participante in enumerate(ranking, 1):
+            if i == 1:
+                icone = '🥇'
+                cor = '#ffd700'
+            elif i == 2:
+                icone = '🥈'
+                cor = '#c0c0c0'
+            elif i == 3:
+                icone = '🥉'
+                cor = '#cd7f32'
+            else:
+                icone = f'{i}º'
+                cor = '#f8f9fa'
+            
+            st.markdown(f"""
+            <div style="background-color: {cor}; padding: 1rem; border-radius: 12px; margin-bottom: 0.8rem; border: 2px solid #dee2e6;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="font-size: 1.2rem;">{icone} {participante['nome']}</strong><br>
+                        <span style="color: #666; font-size: 0.9rem;">
+                            Acertos: {participante['acertos']}/{participante['total_perguntas']} | 
+                            Tempo: {int(participante['tempo_total'])}s | 
+                            Data: {participante['data']}
+                        </span>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong style="font-size: 1.5rem; color: #C41E3A;">{participante['pontuacao']}</strong><br>
+                        <span style="color: #666; font-size: 0.9rem;">pontos</span>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="white-card">', unsafe_allow_html=True)
+        st.markdown('<p style="text-align: center; color: #999;">Nenhum participante ainda.</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Botão para voltar
+    if st.button('🔙 Voltar'):
+        del st.session_state.visualizar_ranking
+        st.rerun()
+
 # Tela inicial
-if not st.session_state.iniciado:
+elif not st.session_state.iniciado:
     st.markdown('<div class="white-card">', unsafe_allow_html=True)
     st.markdown('<h1 class="main-title">🎯 Confra EC 2026</h1>', unsafe_allow_html=True)
     st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 2rem;">Quiz de Conhecimentos</p>', unsafe_allow_html=True)
@@ -213,10 +309,15 @@ if not st.session_state.iniciado:
     
     if st.button('🚀 Começar Quiz', key='btn_iniciar'):
         if nome.strip():
-            st.session_state.nome = nome.strip()
-            st.session_state.iniciado = True
-            st.session_state.tempo_inicio = time.time()
-            st.rerun()
+            # Verificar se é o nome admin para ver ranking
+            if nome.strip() == 'Alef Gomes#':
+                st.session_state.visualizar_ranking = True
+                st.rerun()
+            else:
+                st.session_state.nome = nome.strip()
+                st.session_state.iniciado = True
+                st.session_state.tempo_inicio = time.time()
+                st.rerun()
         else:
             st.error('Por favor, digite seu nome!')
 
@@ -317,51 +418,19 @@ elif not st.session_state.finalizado:
 
 # Tela de resultados
 else:
-    st.markdown('<div class="white-card">', unsafe_allow_html=True)
-    st.markdown('<h1 class="main-title">🏆 Quiz Finalizado!</h1>', unsafe_allow_html=True)
-    st.markdown(f'<p style="text-align: center; font-size: 1.5rem; color: #666; margin-bottom: 2rem;">Parabéns, {st.session_state.nome}!</p>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Resumo de pontuação
-    st.markdown('<div class="white-card">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    
+    # Salvar resultados
     acertos = sum(1 for r in st.session_state.respostas if r['correta'])
     tempo_total = sum(r['tempo_gasto'] for r in st.session_state.respostas)
+    salvar_resultado(
+        st.session_state.nome,
+        st.session_state.pontuacao,
+        acertos,
+        len(perguntas),
+        tempo_total
+    )
     
-    with col1:
-        st.metric('Pontuação Total', f'{st.session_state.pontuacao} pts')
-    with col2:
-        st.metric('Acertos', f'{acertos}/{len(perguntas)}')
-    with col3:
-        st.metric('Tempo Total', f'{int(tempo_total)}s')
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Detalhamento das respostas
     st.markdown('<div class="white-card">', unsafe_allow_html=True)
-    st.markdown('<h3 style="color: #C41E3A; margin-bottom: 1rem;">📊 Detalhamento</h3>', unsafe_allow_html=True)
-    
-    for i, resposta in enumerate(st.session_state.respostas, 1):
-        if resposta['correta']:
-            icone = '✅'
-            cor = '#d4edda'
-        else:
-            icone = '❌'
-            cor = '#f8d7da'
-        
-        st.markdown(f"""
-        <div style="background-color: {cor}; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
-            <strong>{icone} Pergunta {i}:</strong> {resposta['pergunta']}<br>
-            <strong>Sua resposta:</strong> {resposta['resposta'] if resposta['resposta'] else 'Não respondeu (tempo esgotado)'}<br>
-            <strong>Tempo:</strong> {resposta['tempo_gasto']:.1f}s | <strong>Pontos:</strong> {resposta['pontos']}
-        </div>
-        """, unsafe_allow_html=True)
-    
+    st.markdown('<h1 class="main-title">🎯 Quiz Finalizado!</h1>', unsafe_allow_html=True)
+    st.markdown(f'<p style="text-align: center; font-size: 1.5rem; color: #666; margin-bottom: 2rem;">Obrigado pela sua participação, {st.session_state.nome}!</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #999;">Suas respostas foram registradas com sucesso.</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Botão para reiniciar
-    if st.button('🔄 Fazer Quiz Novamente'):
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        st.rerun()
