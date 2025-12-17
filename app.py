@@ -3,7 +3,7 @@ import pandas as pd
 import time
 import json
 import os
-from datetime import datetime #Alef
+from datetime import datetime 
 
 # Configuração da página
 st.set_page_config(
@@ -33,7 +33,14 @@ st.markdown("""
     /* Centralizar conteúdo */
     .main .block-container {
         max-width: 800px;
-        padding: 2rem 1rem;
+        padding: 1rem 1rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    /* Remover padding do topo */
+    .main {
+        padding-top: 0rem;
     }
     
     /* Estilo dos botões */
@@ -67,10 +74,10 @@ st.markdown("""
     /* Cartão branco */
     .white-card {
         background-color: white;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-bottom: 0.5rem;
     }
     
     /* Título principal */
